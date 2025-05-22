@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мой дневник</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+
+        .entry-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        input, textarea {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        textarea {
+            height: 150px;
+            resize: vertical;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .entries {
+            margin-top: 30px;
+        }
+
+        .entry {
+            background-color: #fff;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .entry-date {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+
+        .entry-title {
+            color: #333;
+            margin: 0 0 10px 0;
+        }
+
+        .entry-content {
+            color: #444;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Мой дневник</h1>
+        
+        <form class="entry-form" id="diaryForm">
+            <input type="date" id="entryDate" required>
+            <input type="text" id="entryTitle" placeholder="Заголовок записи" required>
+            <textarea id="entryContent" placeholder="Содержание записи..." required></textarea>
+            <button type="submit">Добавить запись</button>
+        </form>
+
+        <div class="entries" id="entriesList">
+            <!-- Здесь будут отображаться существующие записи -->
+        </div>
+    </div>
+
+    <script>
+        // Загрузка записей из LocalStorage
+        let entries = JSON.parse(localStorage.getItem('diaryEntries')) || [];
+
+        // Инициализация формы
+        const form = document.getElementById('diaryForm');
+        const entriesList = document.getElementById('entriesList');
+
+        // Обработка отправки формы
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const newEntry = {
+                date: document.getElementById('entryDate').value,
+                title: document.getElementById('entryTitle').value,
+                content: document.getElementById('entryContent').value,
+                id: Date.now()
+            };
+
+            entries.push(newEntry);
+            saveEntries();
+            renderEntries();
+            form.reset();
+        });
+
+        // Сохранение записей в LocalStorage
+        function saveEntries() {
+            localStorage.setItem('diaryEntries', JSON.stringify(entries));
+        }
+
+        // Отображение записей
+        function renderEntries() {
+            entriesList.innerHTML = entries.map(entry => `
+                <div class="entry">
+                    <div class="entry-date">${new Date(entry.date).toLocaleDateString()}</div>
+                    <h3 class="entry-title">${entry.title}</h3>
+                    <p class="entry-content">${entry.content}</p>
+                </div>
+            `).join('');
+        }
+
+        // Первоначальная загрузка записей
+        renderEntries();
+    </script>
+</body>
+</html>
